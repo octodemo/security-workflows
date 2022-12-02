@@ -10,7 +10,9 @@ on:
           required: false
           type: string
           default: ''
-          
+
+permissions: read-all
+
 jobs:
   scorecards:
     name: Scorecards analysis
