@@ -68,7 +68,7 @@ jobs:
   # Automatically run TFSec 
   tfsec-scan:
     name: TFSec Scan
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
     permissions:
       actions: read
       contents: read
@@ -91,7 +91,7 @@ jobs:
   # Run CodeQL Scan        
   codeql-scan:
     name: CodeQL Scan
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
     permissions:
       actions: read
       contents: read
