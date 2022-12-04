@@ -10,6 +10,22 @@ on:
           required: false
           type: boolean
           default: false
+        skip-scorecards: 
+          required: false
+          type: boolean
+          default: false
+        skip-tfsec: 
+          required: false
+          type: boolean
+          default: false
+        skip-anchore: 
+          required: false
+          type: boolean
+          default: false
+        skip-dependency-review: 
+          required: false
+          type: boolean
+          default: false
         build-command: 
           required: false
           type: string
@@ -20,6 +36,7 @@ permissions: read-all
 
 jobs:
   scorecards:
+    if: ${{ inputs.skip-scorecards == false }}
     name: Scorecards analysis
     runs-on: ubuntu-latest
     permissions:
@@ -72,8 +89,42 @@ jobs:
         with:
           sarif_file: results.sarif
   
+  Anchore-Build-Scan:
+    if: ${{ inputs.skip-anchore == false }}
+    permissions:
+      contents: read # for actions/checkout to fetch code
+      security-events: write # for github/codeql-action/upload-sarif to upload SARIF results
+      actions: read # only required for a private repository by github/codeql-action/upload-sarif to get the Action run status
+    runs-on: ubuntu-latest
+    steps:
+    - name: Check out the code
+      uses: actions/checkout@v3
+    - name: Build the Docker image
+      run: docker build . --file Dockerfile --tag localbuild/testimage:latest
+    - name: Run the Anchore Grype scan action
+      uses: anchore/scan-action@d5aa5b6cb9414b0c7771438046ff5bcfa2854ed7
+      id: scan
+      with:
+        image: "localbuild/testimage:latest"
+        fail-build: true
+        severity-cutoff: critical
+    - name: Upload vulnerability report
+      uses: github/codeql-action/upload-sarif@v2
+      with:
+        sarif_file: ${{ steps.scan.outputs.sarif }}
+  
+  dependency-review:
+    if: ${{ (inputs.skip-dependency-review == false) && (github.event_name == 'pull_request')}}
+    runs-on: ubuntu-latest
+    steps:
+      - name: 'Checkout Repository'
+        uses: actions/checkout@v3
+      - name: 'Dependency Review'
+        uses: actions/dependency-review-action@v2
+  
   # Automatically run TFSec 
   tfsec-scan:
+    if: ${{ inputs.skip-tfsec == false }}
     name: TFSec Scan
     runs-on: ubuntu-latest
     permissions:
