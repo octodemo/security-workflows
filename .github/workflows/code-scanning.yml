@@ -6,10 +6,15 @@ on:
         languages:
           required: true
           type: string
+        skip-codeql: 
+          required: true
+          type: boolean
+          default: false
         build-command: 
           required: false
           type: string
           default: ''
+        
 
 permissions: read-all
 
@@ -92,6 +97,7 @@ jobs:
   
   # Run CodeQL Scan        
   codeql-scan:
+    if: ${{ github.event.inputs.skip-codeql == "false" }}
     name: CodeQL Scan
     runs-on: ubuntu-latest
     permissions:
