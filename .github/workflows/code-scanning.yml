@@ -7,7 +7,7 @@ on:
           required: true
           type: string
         skip-codeql: 
-          required: true
+          required: false
           type: boolean
           default: false
         build-command: 
