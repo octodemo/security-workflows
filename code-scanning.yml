@@ -1,0 +1,33 @@
+# This is a centralized code scanning workflow.  This is the default code scanning workflow that automatically handles all of your
+# security scans.  
+# 
+# Need some more info? Check out our documentation here: https://github.com/octodemo/security-workflows
+# Got a question?  Ping the security team!
+
+name: Centralized Code Scanning
+
+on:
+  push:
+    branches: $GH_CS_DEFAULT_BRANCH_EXPR
+  pull_request:
+    branches: $GH_CS_DEFAULT_BRANCH_EXPR
+  schedule:
+    - cron: $GH_CS_SCHEDULE_CRON_EXPR
+
+
+jobs:
+  # This job calls the centralized code scanning workflow
+  scanning:
+    uses: octodemo/security-workflows/.github/workflows/code-scanning.yml@main
+    secrets: inherit
+    with:
+      # This section is used to tell CodeQL which languages you need to scan in the repo
+      languages: " $GH_CS_MATRIX_LANGUAGE_EXPR "
+      # Autobuild failed?  uncomment the following line and add your build command
+      # build-comand: "./build.sh"
+      # Need to disable one of the tools from being run?  Uncomment the appropriate line below
+      # skip-codeql: true
+      # skip-scorecards: true 
+      # skip-tfsec: true
+      # skip-anchore: true
+      # skip-dependency-review: true
