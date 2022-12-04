@@ -97,7 +97,7 @@ jobs:
   
   # Run CodeQL Scan        
   codeql-scan:
-    if: ${{ github.event.inputs.skip-codeql == "false" }}
+    if: ${{ inputs.skip-codeql == "false" }}
     name: CodeQL Scan
     runs-on: ubuntu-latest
     permissions:
