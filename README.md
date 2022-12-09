@@ -6,9 +6,9 @@ This repository and the contained workflows are only intended to be used as exam
 
 ## Why use reusable workflows?
 
-Let's take a look at the three main reasons you might want to use a reusable workflow to manage code scanning in your environment:
-* Centralization: All configurations are managed in a single location with auditing and change management associated with every modification to the configuration files.  
-* Simplicity: All of the complexity is extracted away from developers.  Dev only need to worry about a single, simple caller workflow.  All the complex stuff is built into the reusable workflows stored in this repo.  Additionally, as changes are needed in your AppSec strategy, those changes are managed in one single location, instead of across hundres (thousands) of repos. 
+Three reasons:
+* Centralization: All configs are managed in a single location with auditing and change management associated with every modification to the configuration files.  
+* Simplicity: All of the complexity is extracted away from developers.  Devs only need to worry about a single, simple caller workflow.  All the complex stuff is built into the reusable workflows stored in this repo.  
 * Flexibility: Need to add, remove, or update a tool?  No prob 👍.  Modify the centralized workflow and all your repositories will take that change on their next PR. 
 
 ## When **not** to use reusable workflows?
