@@ -76,6 +76,28 @@ jobs:
     with:
       # This section is used to tell CodeQL which languages you need to scan in the repo
       languages: " [ "python", "javascript" ] "
+      
  ```
  
- 
+ To skip a specific test from in the caller workflow, add a flag:
+``` yaml
+name: Centralized Code Scanning
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+  schedule:
+    - cron: '21 17 * * 5'
+
+
+jobs:
+  scanning:
+    uses: octodemo/security-workflows/.github/workflows/code-scanning.yml@main
+    secrets: inherit
+    with:
+      languages: " [ 'go'] "
+      skip-scorecards: true 
+      
+```
