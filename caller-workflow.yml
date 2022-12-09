@@ -1,0 +1,33 @@
+# This is a centralized code scanning workflow.  This is the default code scanning workflow that automatically handles all of your
+# security scans.  
+# 
+# Need some more info? Check out our documentation here: https://github.com/octodemo/security-workflows
+# Got a question?  Ping the security team!
+
+name: Code Scanning - Reusable Workflow
+
+on:
+  push:
+    branches: main
+  pull_request:
+    branches: main
+  schedule:
+    - cron: '48 2 * * 5'
+
+
+jobs:
+  # This job calls the centralized code scanning workflow
+  scanning:
+    uses: octodemo/security-workflows/.github/workflows/code-scanning.yml@main
+    secrets: inherit
+    with:
+      # This section is used to tell CodeQL which languages you need to scan in the repo
+      languages: " ['java', 'javascript'] "
+      # Autobuild failed?  uncomment the following line and add your build command
+      # build-comand: "./build.sh"
+      # Need to disable one of the tools from being run?  Uncomment the appropriate line below
+      # skip-codeql: true
+      # skip-scorecards: true 
+      # skip-tfsec: true
+      skip-anchore: true
+      # skip-dependency-review: true
