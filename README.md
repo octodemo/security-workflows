@@ -19,7 +19,7 @@ If you only run CodeQL and no other code scanning tools, there's no need to add 
 Finally, apps that have complex build steps or environment requirements for CodeQL are also probably not a good fit for a centralized workflow.  If your CodeQL setup process requires additional actions to configure Java versions, or really complex build commands, separate the CodeQL workflow into it's own file in the remote repo and continue to use the centralized workflow for the remaining tools.
 
 ## How does the reusable workflow work?
- [This](.github/workflows/code-scanning.yml) reusable defines the steps for multiple tools including:
+ [This](.github/workflows/code-scanning.yml) reusable workflow defines the steps for multiple tools including:
  * CodeQL
  * Dependency Review
  * Anchore
