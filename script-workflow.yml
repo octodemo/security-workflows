@@ -1,5 +1,5 @@
-# This example caller workflow can be used in a script that applies this workflow to many repositories.  The variables in this file are auto populated when using 
-# this tool: https://github.com/mario-campos/gh-code-scanning
+# This example caller workflow can be used in a script that applies this workflow to many repositories.  
+# The variables in this file are auto populated when using this tool: https://github.com/mario-campos/gh-code-scanning
 
 name: Centralized Code Scanning
 
