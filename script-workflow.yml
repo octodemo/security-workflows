@@ -1,8 +1,5 @@
-# This is a centralized code scanning workflow.  This is the default code scanning workflow that automatically handles all of your
-# security scans.  
-# 
-# Need some more info? Check out our documentation here: https://github.com/octodemo/security-workflows
-# Got a question?  Ping the security team!
+# This example caller workflow can be used in a script that applies this workflow to many repositories.  The variables in this file are auto populated when using 
+# this tool: https://github.com/mario-campos/gh-code-scanning
 
 name: Centralized Code Scanning
 
