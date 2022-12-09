@@ -1,1 +1,30 @@
+# This workflow can be used as a starter workflow in your org for calling your reusable code scanning workflow
+# more info about creating starter workflows here: https://docs.github.com/en/enterprise-cloud@latest/actions/using-workflows/creating-starter-workflows-for-your-organization
 
+name: Centralized Code Scanning
+
+on:
+  push:
+    branches: [ $default-branch, $protected-branches ]
+  pull_request:
+    branches: [ $default-branch ]
+  schedule:
+    - cron: $cron-weekly
+
+
+jobs:
+  # This job calls the centralized code scanning workflow
+  scanning:
+    uses: octodemo/security-workflows/.github/workflows/code-scanning.yml@main
+    secrets: inherit
+    with:
+      # This section is used to tell CodeQL which languages you need to scan in the repo
+      languages: " [ $detected-codeql-languages ] "
+      # Autobuild failed?  uncomment the following line and add your build command
+      # build-comand: "./build.sh"
+      # Need to disable one of the tools from being run?  Uncomment the appropriate line below
+      # skip-codeql: true
+      # skip-scorecards: true 
+      # skip-tfsec: true
+      # skip-anchore: true
+      # skip-dependency-review: true
