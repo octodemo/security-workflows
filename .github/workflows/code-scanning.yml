@@ -21,7 +21,7 @@ on:
         skip-anchore: 
           required: false
           type: boolean
-          default: true
+          default: false
         skip-dependency-review: 
           required: false
           type: boolean
