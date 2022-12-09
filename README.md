@@ -1,8 +1,8 @@
 # Security Workflows
 
-Security Workflows contains example [reusable workflows](https://docs.github.com/en/actions/using-workflows/reusing-workflows) which focus on defining code scanning steps and tooling for an organization. 
+Security Workflows is an example repository showing you how to use [reusable workflows](https://docs.github.com/en/actions/using-workflows/reusing-workflows) for code scanning. 
 
-This repository and the contained workflows are intended to be used as examples.
+This repository and the contained workflows are only intended to be used as examples.
 
 ## Why use reusable workflows?
 
