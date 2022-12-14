@@ -1,4 +1,4 @@
-# Security Workflows
+# (Reusable) Security Workflows
 
 Security Workflows is an example repository showing you how to use [reusable workflows](https://docs.github.com/en/actions/using-workflows/reusing-workflows) for code scanning. 
 
