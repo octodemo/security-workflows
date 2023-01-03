@@ -37,7 +37,7 @@ permissions: read-all
 jobs:
   scorecards:
     if: ${{ inputs.skip-scorecards == false }}
-    name: Scorecards analysis
+    name: Repo Configuration Scan (OSSF Scorecards)
     runs-on: ubuntu-latest
     permissions:
       # Needed to upload the results to code-scanning dashboard.
@@ -91,6 +91,7 @@ jobs:
   
   Anchore-Build-Scan:
     if: ${{ inputs.skip-anchore == false }}
+    name: Container Scan (Anchore)
     permissions:
       contents: read # for actions/checkout to fetch code
       security-events: write # for github/codeql-action/upload-sarif to upload SARIF results
@@ -115,6 +116,7 @@ jobs:
   
   dependency-review:
     if: ${{ (inputs.skip-dependency-review == false) && (github.event_name == 'pull_request')}}
+    name: SCA Scan (dependency review)
     runs-on: ubuntu-latest
     steps:
       - name: 'Checkout Repository'
@@ -125,7 +127,7 @@ jobs:
   # Automatically run TFSec 
   tfsec-scan:
     if: ${{ inputs.skip-tfsec == false }}
-    name: TFSec Scan
+    name: IaC Scan (tfsec)
     runs-on: ubuntu-latest
     permissions:
       actions: read
@@ -149,7 +151,7 @@ jobs:
   # Run CodeQL Scan        
   codeql-scan:
     if: ${{ inputs.skip-codeql == false }}
-    name: CodeQL Scan
+    name: SAST Scan (CodeQL)
     runs-on: ubuntu-latest
     permissions:
       actions: read
