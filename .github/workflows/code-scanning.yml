@@ -13,7 +13,7 @@ on:
         skip-scorecards: 
           required: false
           type: boolean
-          default: false
+          default: true
         skip-tfsec: 
           required: false
           type: boolean
