@@ -3,17 +3,19 @@ name: "Centralized Code Scanning"
 on: 
   workflow_call:
     inputs:
+        # used by CodeQL to define which languages to scan
         languages:
           required: true
           type: string
+        # Used by CodeQL for unique build commands
+        build-command: 
+          required: false
+          type: string
+          default: ''
         skip-codeql: 
           required: false
           type: boolean
           default: false
-        skip-scorecards: 
-          required: false
-          type: boolean
-          default: true
         skip-tfsec: 
           required: false
           type: boolean
@@ -26,70 +28,11 @@ on:
           required: false
           type: boolean
           default: false
-        build-command: 
-          required: false
-          type: string
-          default: ''
-        
 
 permissions: read-all
 
-jobs:
-  scorecards:
-    if: ${{ inputs.skip-scorecards == false }}
-    name: OSSF Scorecards
-    runs-on: ubuntu-latest
-    permissions:
-      # Needed to upload the results to code-scanning dashboard.
-      security-events: write
-      # Needed to publish results and get a badge (see publish_results below).
-      id-token: write
-      # Uncomment the permissions below if installing in a private repository.
-      contents: read
-      actions: read
-
-    steps:
-      - name: "Checkout code"
-        uses: actions/checkout@93ea575cb5d8a053eaa0ac8fa3b40d7e05a33cc8 # v3.1.0
-        with:
-          persist-credentials: false
-
-      - name: "Run analysis"
-        uses: ossf/scorecard-action@99c53751e09b9529366343771cc321ec74e9bd3d # v2.0.6
-        with:
-          results_file: results.sarif
-          results_format: sarif
-          # (Optional) "write" PAT token. Uncomment the `repo_token` line below if:
-          # - you want to enable the Branch-Protection check on a *public* repository, or
-          # - you are installing Scorecards on a *private* repository
-          # To create the PAT, follow the steps in https://github.com/ossf/scorecard-action#authentication-with-pat.
-          repo_token: ${{ secrets.SCORECARD_READ_TOKEN }}
-
-          # Public repositories:
-          #   - Publish results to OpenSSF REST API for easy access by consumers
-          #   - Allows the repository to include the Scorecard badge.
-          #   - See https://github.com/ossf/scorecard-action#publishing-results.
-          # For private repositories:
-          #   - `publish_results` will always be set to `false`, regardless
-          #     of the value entered here.
-          publish_results: false
-
-      # Upload the results as artifacts (optional). Commenting out will disable uploads of run results in SARIF
-      # format to the repository Actions tab.
-      - name: "Upload artifact"
-        uses: actions/upload-artifact@3cea5372237819ed00197afe530f5a7ea3e805c8 # v3.1.0
-        with:
-          name: SARIF file
-          path: results.sarif
-          retention-days: 5
-
-      # Upload the results to GitHub's code scanning dashboard.
-      - name: "Upload to code-scanning"
-        uses: github/codeql-action/upload-sarif@807578363a7869ca324a79039e6db9c843e0e100 # v2.1.27
-        with:
-          sarif_file: results.sarif
-  
-  Anchore-Build-Scan:
+jobs:  
+  anchore:
     if: ${{ inputs.skip-anchore == false }}
     name: Anchore
     permissions:
@@ -125,7 +68,7 @@ jobs:
         uses: actions/dependency-review-action@v2
   
   # Automatically run TFSec 
-  tfsec-scan:
+  tfsec:
     if: ${{ inputs.skip-tfsec == false }}
     name: tfsec
     runs-on: ubuntu-latest
@@ -149,7 +92,7 @@ jobs:
           sarif_file: tfsec.sarif
   
   # Run CodeQL Scan        
-  codeql-scan:
+  codeql:
     if: ${{ inputs.skip-codeql == false }}
     name: CodeQL
     runs-on: ubuntu-latest
