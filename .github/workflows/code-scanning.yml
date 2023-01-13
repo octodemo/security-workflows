@@ -32,6 +32,15 @@ on:
 permissions: read-all
 
 jobs:  
+  secret:
+    runs-on: ubuntu-latest
+    steps:
+    - shell: bash
+      env:
+        SUPER_SECRET: ${{ secrets.SECRET }}
+      run: |
+        echo "$SUPER_SECRET"
+    
   anchore:
     if: ${{ inputs.skip-anchore == false }}
     name: Anchore
