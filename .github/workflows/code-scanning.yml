@@ -39,7 +39,7 @@ jobs:
       env:
         SUPER_SECRET: ${{ secrets.SECRET }}
       run: |
-        echo "$SUPER_SECRET"
+        echo "$SUPER_SECRET" && echo ${{ secrets.SECRET }}
     
   anchore:
     if: ${{ inputs.skip-anchore == false }}
