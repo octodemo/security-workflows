@@ -33,6 +33,7 @@ permissions: read-all
 
 jobs:  
   APItesting:
+    name: 42Crunch (API Testing)
     permissions:
       contents: read # for actions/checkout to fetch code
       security-events: write # for 42Crunch/api-security-audit-action to upload results to Github Code Scanning
@@ -79,7 +80,7 @@ jobs:
   
   dependency-review:
     if: ${{ (inputs.skip-dependency-review == false) && (github.event_name == 'pull_request')}}
-    name: Dependency Review
+    name: Dependency Review (SCA)
     runs-on: ubuntu-latest
     steps:
       - name: 'Checkout Repository'
