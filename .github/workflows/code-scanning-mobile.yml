@@ -1,0 +1,155 @@
+name: "Centralized Code Scanning"
+
+on: 
+  workflow_call:
+    inputs:
+        # used by CodeQL to define which languages to scan
+        languages:
+          required: true
+          type: string
+        # Used by CodeQL for unique build commands
+        build-command: 
+          required: false
+          type: string
+          default: ''
+        skip-codeql: 
+          required: false
+          type: boolean
+          default: false
+        skip-tfsec: 
+          required: false
+          type: boolean
+          default: false
+        skip-anchore: 
+          required: false
+          type: boolean
+          default: false
+        skip-dependency-review: 
+          required: false
+          type: boolean
+          default: false
+
+permissions: read-all
+
+jobs:  
+  APItesting:
+    permissions:
+      contents: read # for actions/checkout to fetch code
+      security-events: write # for 42Crunch/api-security-audit-action to upload results to Github Code Scanning
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: 42Crunch REST API Static Security Testing
+        uses: 42Crunch/api-security-audit-action@f3a4f4d44ca6f538fe84361373d7a2a374018fdd
+        with:
+          # Please create free account at https://platform.42crunch.com/register
+          # Follow these steps to configure API_TOKEN https://docs.42crunch.com/latest/content/tasks/integrate_github_actions.htm
+          api-token: ${{ secrets._42CRUNCH_TOKEN }}
+          # Fail if any OpenAPI file scores lower than 75
+          min-score: 75
+          # Upload results to Github code scanning
+          upload-to-code-scanning: true
+          # Github token for uploading the results
+          github-token: ${{ github.token }}
+          
+  anchore:
+    if: ${{ inputs.skip-anchore == false }}
+    name: Grype (container scanning)
+    permissions:
+      contents: read # for actions/checkout to fetch code
+      security-events: write # for github/codeql-action/upload-sarif to upload SARIF results
+      actions: read # only required for a private repository by github/codeql-action/upload-sarif to get the Action run status
+    runs-on: ubuntu-latest
+    steps:
+    - name: Check out the code
+      uses: actions/checkout@v3
+    - name: Build the Docker image
+      run: docker build . --file ./app/Dockerfile --tag localbuild/testimage:latest
+    - name: Run the Anchore Grype scan action
+      uses: anchore/scan-action@d5aa5b6cb9414b0c7771438046ff5bcfa2854ed7
+      id: scan
+      with:
+        image: "localbuild/testimage:latest"
+        fail-build: false
+        severity-cutoff: critical
+    - name: Upload vulnerability report
+      uses: github/codeql-action/upload-sarif@v2
+      with:
+        sarif_file: ${{ steps.scan.outputs.sarif }}
+  
+  dependency-review:
+    if: ${{ (inputs.skip-dependency-review == false) && (github.event_name == 'pull_request')}}
+    name: Dependency Review
+    runs-on: ubuntu-latest
+    steps:
+      - name: 'Checkout Repository'
+        uses: actions/checkout@v3
+      - name: 'Dependency Review'
+        uses: actions/dependency-review-action@v2
+        with:
+          deny-licenses: GPL-3.0
+  
+  # Automatically run TFSec 
+  tfsec:
+    if: ${{ inputs.skip-tfsec == false }}
+    name: tfsec
+    runs-on: ubuntu-latest
+    permissions:
+      actions: read
+      contents: read
+      security-events: write
+
+    steps:
+      - name: Clone repo
+        uses: actions/checkout@v3
+
+      - name: Run tfsec
+        uses: aquasecurity/tfsec-sarif-action@9a83b5c3524f825c020e356335855741fd02745f
+        with:
+          sarif_file: tfsec.sarif
+
+      - name: Upload SARIF file
+        uses: github/codeql-action/upload-sarif@v2
+        with:
+          sarif_file: tfsec.sarif
+  
+  # Run CodeQL Scan        
+  codeql:
+    if: ${{ inputs.skip-codeql == false }}
+    name: CodeQL
+    runs-on: ubuntu-latest
+    permissions:
+      actions: read
+      contents: read
+      security-events: write
+
+    strategy:
+      fail-fast: false
+      matrix:
+        language: ${{ fromJSON(inputs.languages) }}
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+    # Initializes the CodeQL tools for scanning.
+    - name: Initialize CodeQL
+      uses: github/codeql-action/init@v2
+      with:
+        languages: ${{ matrix.language }}
+        
+    # Autobuild attempts to build the application for CodeQL
+    - name: Autobuild
+      if: ${{ inputs.build-command == '' }}
+      uses: github/codeql-action/autobuild@v2
+
+    # If the Autobuild command fails, pass a build command to the workflow using 'build-command' input
+    - name: Custom Build Command
+      if: ${{ inputs.build-command != '' }}
+      run: |
+        echo "Run, Build Application using script"
+        ${{ inputs.build-command }}
+    - name: Perform CodeQL Analysis
+      uses: github/codeql-action/analyze@v2
+      with:
+        category: "/language:${{matrix.language}}"
