@@ -101,3 +101,47 @@ jobs:
       skip-scorecards: true 
       
 ```
+
+## How do I implement through a starter workflow?
+
+Starter workflows allow everyone in your organization who has permission to create workflows to do so more quickly and easily. When you create a new workflow, you can choose a starter workflow and some or all of the work of writing the workflow will be done for you. You can use starter workflows as a starting place to build your custom workflow or use them as-is. This not only saves time, it promotes consistency and best practice across your organization.
+
+Start from the the provided `starter-workflow.yml` template:  
+```yaml
+# This workflow can be used as a starter workflow in your org for calling your reusable code scanning workflow
+# more info about creating starter workflows here: https://docs.github.com/en/enterprise-cloud@latest/actions/using-workflows/creating-starter-workflows-for-your-organization
+
+name: Centralized Code Scanning
+
+on:
+  push:
+    branches: [ $default-branch, $protected-branches ]
+  pull_request:
+    branches: [ $default-branch ]
+  schedule:
+    - cron: $cron-weekly
+
+
+jobs:
+  # This job calls the centralized code scanning workflow
+  scanning:
+    uses: octodemo/security-workflows/.github/workflows/code-scanning.yml@main
+    secrets: inherit
+    with:
+      # This section is used to tell CodeQL which languages you need to scan in the repo
+      languages: " [ $detected-codeql-languages ] "
+      # Autobuild failed?  uncomment the following line and add your build command
+      # build-comand: "./build.sh"
+      # Need to disable one of the tools from being run?  Uncomment the appropriate line below
+      # skip-codeql: true
+      # skip-scorecards: true 
+      # skip-tfsec: true
+      # skip-anchore: true
+      # skip-dependency-review: true
+ ```
+
+
+Using the organziation's `.github` repository, add the starter template along with a metadata file under the special `workflow-templates` directory as described in: [Creating starter workflows for your organization
+](https://docs.github.com/en/enterprise-cloud@latest/actions/using-workflows/creating-starter-workflows-for-your-organization#creating-a-starter-workflow). 
+
+You can take reference in the following sample configuration [template](https://github.com/octodemo/.github/blob/master/workflow-templates/reusable-code-scanning.yml) and [metadata](https://github.com/octodemo/.github/blob/master/workflow-templates/reusable-code-scanning.properties.json).
