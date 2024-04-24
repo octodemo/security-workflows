@@ -141,7 +141,7 @@ jobs:
  ```
 
 
-Using the organziation's `.github` repository, add the starter template along with a metadata file under the special `workflow-templates` directory as described in: [Creating starter workflows for your organization
+Using the organziation's public `.github` repository, add the starter template along with a metadata file under the special `workflow-templates` directory as described in: [Creating starter workflows for your organization
 ](https://docs.github.com/en/enterprise-cloud@latest/actions/using-workflows/creating-starter-workflows-for-your-organization#creating-a-starter-workflow). 
 
 You can take reference in the following sample configuration [template](https://github.com/octodemo/.github/blob/master/workflow-templates/reusable-code-scanning.yml) and [metadata](https://github.com/octodemo/.github/blob/master/workflow-templates/reusable-code-scanning.properties.json).
