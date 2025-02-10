@@ -1,0 +1,2 @@
+.github/workflows/*.yml linguist-language=GitHub-Actions linguist-detectable
+.github/workflows/*.yaml linguist-language=GitHub-Actions linguist-detectable
