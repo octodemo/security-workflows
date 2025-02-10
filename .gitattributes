@@ -1,2 +1,2 @@
-.github/workflows/*.yml linguist-detectable -linguist-vendored linguist-language=Github-Actions
-.github/workflows/*.yaml linguist-detectable -linguist-vendored linguist-language=Github-Actions
+.github/workflows/*.yml linguist-detectable -linguist-vendored
+.github/workflows/*.yaml linguist-detectable -linguist-vendored
