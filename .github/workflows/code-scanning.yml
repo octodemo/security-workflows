@@ -53,7 +53,7 @@ jobs:
         fail-build: false
         severity-cutoff: critical
     - name: Upload vulnerability report
-      uses: github/codeql-action/upload-sarif@v2
+      uses: github/codeql-action/upload-sarif@v4
       with:
         sarif_file: ${{ steps.scan.outputs.sarif }}
   
@@ -89,7 +89,7 @@ jobs:
           sarif_file: tfsec.sarif
 
       - name: Upload SARIF file
-        uses: github/codeql-action/upload-sarif@v2
+        uses: github/codeql-action/upload-sarif@v4
         with:
           sarif_file: tfsec.sarif
   
